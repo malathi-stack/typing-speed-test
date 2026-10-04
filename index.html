@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Keystroke — Typing Speed Test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="ribbon"></div>
+
+  <div class="app">
+
+    <!-- ===== Header ===== -->
+    <!-- ===== Header ===== -->
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-mark">§</span>
+    <h1>Keystroke</h1>
+  </div>
+
+  <div class="header-actions">
+    <button
+      id="soundToggle"
+      class="icon-btn"
+      type="button"
+      aria-pressed="false"
+      title="Sound effects"
+      aria-label="Toggle sound effects"
+    >
+      <span class="icon-on">🔊</span>
+      <span class="icon-off">🔇</span>
+    </button>
+  </div>
+</header>
+
+
+
+    <!-- ===== Setup screen (screen 1): choose difficulty + duration ===== -->
+    <section class="setup-view" id="setupView">
+
+      <section class="controls" id="controls">
+        <div class="control-group" role="group" aria-label="Difficulty">
+          <span class="control-label">Difficulty</span>
+          <div class="pill-set" id="difficultySet">
+            <button class="pill" data-difficulty="easy" type="button">Easy</button>
+            <button class="pill is-active" data-difficulty="medium" type="button">Medium</button>
+            <button class="pill" data-difficulty="hard" type="button">Hard</button>
+          </div>
+        </div>
+        <div class="control-group" role="group" aria-label="Duration">
+          <span class="control-label">Duration</span>
+          <div class="pill-set" id="durationSet">
+            <button class="pill" data-duration="15" type="button">15s</button>
+            <button class="pill is-active" data-duration="30" type="button">30s</button>
+            <button class="pill" data-duration="60" type="button">60s</button>
+            <button class="pill" data-duration="120" type="button">120s</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="start-panel">
+        <p class="setup-best">Your best for this setup: <span id="setupBest">—</span> wpm</p>
+        <button id="startTestBtn" class="primary-btn primary-btn-lg" type="button">Start test →</button>
+      </section>
+
+      <!-- ===== History (lives on the setup screen so you can browse it before starting) ===== -->
+      <section class="history-panel">
+        <div class="history-head">
+          <h2>Performance history</h2>
+          <button id="clearHistoryBtn" class="text-btn" type="button">Clear</button>
+        </div>
+        <div class="history-chart" id="historyChart">
+          <p class="empty-note" id="historyEmpty">No sessions recorded yet — finish a test to log one here.</p>
+        </div>
+        <ul class="history-list" id="historyList"></ul>
+      </section>
+
+    </section>
+
+    <!-- ===== Test screen (screen 2): distraction-free, shown after Start ===== -->
+    <section class="test-view" id="testView" hidden>
+
+    <!-- ===== Stats bar ===== -->
+    <section class="stats-bar" id="statsBar" aria-live="polite">
+      <div class="stat">
+        <span class="stat-value" id="statTimer">30</span>
+        <span class="stat-label">seconds</span>
+      </div>
+      <div class="stat stat-primary">
+        <span class="stat-value" id="statWpm">0</span>
+        <span class="stat-label">wpm</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statAccuracy">100</span>
+        <span class="stat-label">% accuracy</span>
+      </div>
+      <div class="stat">
+        <span class="stat-value" id="statErrors">0</span>
+        <span class="stat-label">errors</span>
+      </div>
+      <div class="stat stat-pb">
+        <span class="stat-value" id="statBest">—</span>
+        <span class="stat-label">personal best</span>
+      </div>
+    </section>
+
+    <!-- ===== Typing area ===== -->
+    <section class="type-stage" id="typeStage">
+      <div class="passage-wrap" id="passageWrap">
+        <p class="passage" id="passage" aria-hidden="true"></p>
+        <div class="focus-veil" id="focusVeil">
+          <span>Click here or press any key to start typing</span>
+        </div>
+      </div>
+      <input
+        type="text"
+        id="hiddenInput"
+        class="hidden-input"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        aria-label="Typing input"
+      >
+      <div class="stage-footer">
+        <button id="restartBtn" class="text-btn" type="button">⟲ Restart</button>
+        <div class="char-tally">
+          <span><i class="dot correct"></i><span id="tallyCorrect">0</span> correct</span>
+          <span><i class="dot incorrect"></i><span id="tallyIncorrect">0</span> incorrect</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Results screen ===== -->
+    <section class="results" id="results" hidden>
+      <div class="results-head">
+        <h2 id="resultsHeadline">Test complete</h2>
+        <p class="pb-badge" id="pbBadge" hidden>New personal best</p>
+      </div>
+      <div class="results-grid">
+        <div class="result-cell">
+          <span class="result-value" id="resWpm">0</span>
+          <span class="result-label">words / min</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-value" id="resAccuracy">0</span>
+          <span class="result-label">% accuracy</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-value" id="resCorrect">0</span>
+          <span class="result-label">correct chars</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-value" id="resIncorrect">0</span>
+          <span class="result-label">incorrect chars</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-value" id="resErrors">0</span>
+          <span class="result-label">total errors</span>
+        </div>
+        <div class="result-cell">
+          <span class="result-value" id="resRawWpm">0</span>
+          <span class="result-label">raw wpm</span>
+        </div>
+      </div>
+      <div class="pace-chart-wrap">
+        <span class="mini-label">wpm over time</span>
+        <svg id="paceChart" class="pace-chart" viewBox="0 0 300 80" preserveAspectRatio="none"></svg>
+      </div>
+      <div class="results-actions">
+        <button id="tryAgainBtn" class="primary-btn" type="button">Try again</button>
+        <button id="changeSettingsBtn" class="text-btn" type="button">← Change settings</button>
+      </div>
+    </section>
+
+    <!-- ===== Keyboard visualization ===== -->
+    <section class="keyboard-panel" id="keyboardPanel">
+      <div class="keyboard" id="keyboard"></div>
+    </section>
+
+    </section><!-- /test-view -->
+
+    <footer class="app-footer">
+      <p>Built for the Keystroke portfolio project — practice a paragraph, then try to beat your own record.</p>
+    </footer>
+
+  </div>
+
+<script src="script.js"></script>
+</body>
+</html>
